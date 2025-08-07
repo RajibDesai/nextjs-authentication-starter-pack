@@ -1,22 +1,34 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { OAuthButton } from "@/components/shared/OAuthButton";
 
-type FormValues = {
+export type FormValues = {
   email: string;
   password: string;
 };
 
-const LoginPage = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>();
+ const inputClass = "mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm";
+
+export default function LoginPage() {
+  const { register, handleSubmit } = useForm<FormValues>();
+  const router = useRouter();
 
   const onSubmit = async (data: FormValues) => {
-    console.log(data);
+    const res = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+
+    if (res?.ok) {
+      router.push("/dashboard");
+    } else {
+      alert("Invalid credentials");
+    }
   };
 
   return (
@@ -49,7 +61,7 @@ const LoginPage = () => {
                 type="email"
                 {...register("email")}
                 placeholder="Email"
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                className={inputClass}
                 required
               />
             </div>
@@ -65,8 +77,8 @@ const LoginPage = () => {
                 id="password"
                 type="password"
                 {...register("password")}
-                placeholder="Email"
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                placeholder="Password"
+                className={inputClass}
                 required
               />
             </div>
@@ -82,39 +94,22 @@ const LoginPage = () => {
           </form>
 
           <p className="text-center mt-4 text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-teal-500 hover:underline">
-              Create an account
-            </Link>
-          </p>
+  {`Don't have an account? `}
+  <Link href="/register" className="ml-1 text-teal-500 hover:underline">
+    Create an account
+  </Link>
+</p>
 
           <p className="text-center mt-6 text-sm text-gray-500">
             Or Sign Up Using
           </p>
 
-          {/* Social Login Buttons */}
           <div className="flex justify-center gap-4 mt-4">
-            <button className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full shadow-md hover:bg-gray-200">
-              <Image
-                src="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png"
-                width={30}
-                height={30}
-                alt="Google logo"
-              />
-            </button>
-            <button className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full shadow-md hover:bg-gray-200">
-              <Image
-                src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
-                width={25}
-                height={25}
-                alt="GitHub logo"
-              />
-            </button>
+               <OAuthButton provider="google" />
+               <OAuthButton provider="github" />
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default LoginPage;
+}
