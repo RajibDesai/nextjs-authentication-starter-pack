@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaUser, FaCog, FaHome } from "react-icons/fa";

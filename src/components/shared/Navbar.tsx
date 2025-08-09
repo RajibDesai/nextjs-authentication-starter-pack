@@ -2,17 +2,15 @@
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 
-type UserProps = {
-  user?:{
-    name?:string | null | undefined,
-    email?:string | null | undefined,
-    image?:string | null | undefined
-  }
-}
+import { Session } from "next-auth";
+
+type NavbarProps = {
+  session: Session | null;
+};
 
 const clsssInputClass =  "border border-red-500 text-red-500 px-5 py-2 rounded-full hover:bg-red-500 hover:text-black transition duration-200"
 
-const Navbar = ({session}:{session:UserProps | null}) => {
+const Navbar = ({ session }: NavbarProps) => {
   return (
     <div className="w-[90%] mx-auto flex items-center justify-between bg-white border-b py-4">
       <div className="flex items-center">
